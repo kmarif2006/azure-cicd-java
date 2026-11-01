@@ -1,0 +1,92 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  ACR_NAME: cicdkma2006
+  ACR_LOGIN_SERVER: cicdkma2006.azurecr.io
+  IMAGE_NAME: azure-cicd-java
+  AKS_RESOURCE_GROUP: cicd-rg
+  AKS_CLUSTER_NAME: cicd-aks
+
+jobs:
+  build-test-deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Download source code from GitHub
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. Install Java 17
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # 3. Build and run tests
+      - name: Build and test with Maven
+        run: mvn clean test package
+
+      # 4. Login to Azure using GitHub OIDC
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 5. Login Docker to Azure Container Registry
+      - name: Login to Azure Container Registry
+        run: az acr login --name $ACR_NAME
+
+      # 6. Build Docker image
+      - name: Build Docker image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+            -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
+
+      # 7. Push Docker image to ACR
+      - name: Push Docker image to ACR
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
+
+      # 8. Get AKS credentials
+      - name: Connect to AKS
+        run: |
+          az aks get-credentials \
+            --resource-group $AKS_RESOURCE_GROUP \
+            --name $AKS_CLUSTER_NAME \
+            --overwrite-existing
+
+      # 9. Update Kubernetes deployment
+      - name: Deploy to AKS
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          kubectl set image deployment/azure-cicd-java \
+            azure-cicd-java=$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
+
+          kubectl rollout status deployment/azure-cicd-java --timeout=180s
+
+      # 10. Verify deployment
+      - name: Verify deployment
+        run: |
+          kubectl get deployment
+          kubectl get pods
+          kubectl get svc
