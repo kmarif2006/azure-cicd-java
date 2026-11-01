@@ -5,7 +5,7 @@ metadata:
   name: azure-cicd-java-service
 
 spec:
-  type: NodePort
+  type: LoadBalancer
 
   selector:
     app: azure-cicd-java

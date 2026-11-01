@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         - name: azure-cicd-java
-          image: azure-cicd-java:1.0
-          imagePullPolicy: Never
+          image: cicdkma2006.azurecr.io/azure-cicd-java:1.0
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 8080
