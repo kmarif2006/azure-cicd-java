@@ -42,9 +42,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 42px;
             gap: 10px;
             flex-wrap: wrap;
+            margin-bottom: 42px;
         }
 
         .version {
@@ -218,9 +218,17 @@
         }
 
         @media (max-width: 480px) {
-            .app { padding: 25px 16px; }
-            .header { margin-bottom: 35px; }
-            button { padding: 13px 17px; }
+            .app {
+                padding: 25px 16px;
+            }
+
+            .header {
+                margin-bottom: 35px;
+            }
+
+            button {
+                padding: 13px 17px;
+            }
         }
     </style>
 </head>
@@ -229,13 +237,14 @@
     <main class="app">
 
         <header class="header">
-            <div class="version" id="version">STOPWATCH · VERSION 1.0</div>
+            <div class="version">STOPWATCH · VERSION 1.0</div>
+
             <div class="status" id="status">
                 <span class="status-dot"></span>READY
             </div>
         </header>
 
-        <div class="heading">Precision Stopwatch</div>
+        <div class="heading">STOPWATCH</div>
 
         <div class="timer" id="timer">
             00:00:00<span class="milliseconds">.00</span>
@@ -306,7 +315,9 @@
 
         function setStatus(value) {
             const status = document.getElementById('status');
+
             status.classList.toggle('running', value === 'RUNNING');
+
             status.innerHTML =
                 '<span class="status-dot"></span>' + value;
         }
@@ -339,8 +350,9 @@
                 label.textContent = 'Lap ' + lap.lapNumber;
 
                 const time = document.createElement('span');
-                time.textContent = formatTime(lap.elapsedMs).main +
-                    formatTime(lap.elapsedMs).fraction;
+                const formatted = formatTime(lap.elapsedMs);
+
+                time.textContent = formatted.main + formatted.fraction;
 
                 row.append(label, time);
                 list.appendChild(row);
@@ -366,8 +378,10 @@
             syncTime = Date.now();
             laps = state.laps || [];
 
-            setStatus(running ? 'RUNNING' :
-                elapsed > 0 ? 'PAUSED' : 'READY');
+            setStatus(
+                running ? 'RUNNING' :
+                elapsed > 0 ? 'PAUSED' : 'READY'
+            );
 
             updateDisplay();
             renderLaps();
@@ -388,6 +402,7 @@
 
             busy = true;
             updateButtons();
+
             document.getElementById('error').textContent = '';
 
             try {
@@ -402,6 +417,7 @@
             } catch (error) {
                 document.getElementById('error').textContent =
                     'Unable to contact the backend. Please try again.';
+
                 console.error(error);
             } finally {
                 busy = false;
@@ -432,6 +448,7 @@
             } catch (error) {
                 document.getElementById('error').textContent =
                     'Unable to connect to the backend.';
+
                 console.error(error);
             }
         }
