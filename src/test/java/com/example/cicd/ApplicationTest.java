@@ -8,11 +8,8 @@ class ApplicationTest {
 
     @Test
     void applicationMessageShouldBeCorrect() {
-
         String expected = "Hello from Azure CI/CD! Version: 1.0";
-
         String actual = "Hello from Azure CI/CD! Version: 1.0";
-
         assertEquals(expected, actual);
     }
 }

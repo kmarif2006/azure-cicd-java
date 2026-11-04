@@ -1,12 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
   name: azure-cicd-java
 
 spec:
   replicas: 2
-
   selector:
     matchLabels:
       app: azure-cicd-java
@@ -15,12 +13,10 @@ spec:
     metadata:
       labels:
         app: azure-cicd-java
-
     spec:
       containers:
         - name: azure-cicd-java
           image: cicdkma2006.azurecr.io/azure-cicd-java:1.0
-          imagePullPolicy: Always
-
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
