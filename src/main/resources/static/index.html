@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, #263d70 0, transparent 35%),
+                radial-gradient(circle at 85% 80%, #35245e 0, transparent 35%),
+                #0b1020;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 620px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 28px;
+            padding: 36px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            backdrop-filter: blur(18px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 42px;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #aeb9d1;
+            background: rgba(255,255,255,0.08);
+            padding: 9px 14px;
+            border-radius: 30px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #a0a9bb;
+            margin-right: 7px;
+        }
+
+        .status.running .status-dot {
+            background: #27e0a3;
+            box-shadow: 0 0 10px #27e0a3;
+        }
+
+        .heading {
+            text-align: center;
+            color: #aab5ce;
+            font-size: 12px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .timer {
+            text-align: center;
+            margin: 28px 0 35px;
+            font-size: clamp(43px, 10vw, 76px);
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .timer .milliseconds {
+            color: #8b9cff;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            border-radius: 14px;
+            padding: 15px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.12);
+        }
+
+        button:active {
+            transform: scale(.96);
+        }
+
+        button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .start {
+            background: #27e0a3;
+            color: #071b17;
+            min-width: 115px;
+        }
+
+        .pause {
+            background: #ffbd59;
+            color: #291900;
+        }
+
+        .reset {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        .lap {
+            background: #7187ff;
+            color: white;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .section-header h3 {
+            font-size: 15px;
+        }
+
+        .lap-count {
+            color: #aab5ce;
+            font-size: 12px;
+        }
+
+        .lap-list {
+            margin-top: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .lap-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            color: #d5ddef;
+            font-size: 14px;
+        }
+
+        .lap-row:first-child {
+            color: #27e0a3;
+        }
+
+        .empty {
+            text-align: center;
+            color: #77839d;
+            padding: 25px 0;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 35px;
+            color: #66728d;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .error {
+            color: #ff8c8c;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .app { padding: 25px 16px; }
+            .header { margin-bottom: 35px; }
+            button { padding: 13px 17px; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="app">
+
+        <header class="header">
+            <div class="status" id="status">
+                <span class="status-dot"></span>READY
+            </div>
+        </header>
+
+        <div class="heading">Stopwatch</div>
+
+        <div class="timer" id="timer">
+            00:00:00<span class="milliseconds">.00</span>
+        </div>
+
+        <div class="controls">
+            <button class="start" id="startBtn" onclick="startTimer()">▶ Start</button>
+            <button class="pause" id="pauseBtn" onclick="pauseTimer()">Ⅱ Pause</button>
+            <button class="reset" onclick="resetTimer()">↻ Reset</button>
+            <button class="lap" id="lapBtn" onclick="recordLap()">⚑ Lap</button>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <section class="section">
+            <div class="section-header">
+                <h3>Lap History</h3>
+                <span class="lap-count" id="lapCount">0 LAPS</span>
+            </div>
+
+            <div class="lap-list" id="lapList">
+                <div class="empty">Your lap records will appear here.</div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            BUILT WITH JAVA 17 · SPRING BOOT
+        </footer>
+
+    </main>
+
+    <script>
+        const API = '/api/stopwatch';
+
+        let elapsed = 0;
+        let running = false;
+        let syncTime = 0;
+        let displayInterval = null;
+        let busy = false;
+        let laps = [];
+
+        function formatTime(ms) {
+            const total = Math.floor(ms);
+            const hours = Math.floor(total / 3600000);
+            const minutes = Math.floor((total % 3600000) / 60000);
+            const seconds = Math.floor((total % 60000) / 1000);
+            const centiseconds = Math.floor((total % 1000) / 10);
+
+            return {
+                main: [hours, minutes, seconds]
+                    .map(n => String(n).padStart(2, '0')).join(':'),
+                fraction: '.' + String(centiseconds).padStart(2, '0')
+            };
+        }
+
+        function currentTime() {
+            return elapsed + (running ? Date.now() - syncTime : 0);
+        }
+
+        function updateDisplay() {
+            const time = formatTime(currentTime());
+
+            document.getElementById('timer').innerHTML =
+                time.main +
+                '<span class="milliseconds">' +
+                time.fraction + '</span>';
+        }
+
+        function setStatus(value) {
+            const status = document.getElementById('status');
+            status.classList.toggle('running', value === 'RUNNING');
+            status.innerHTML =
+                '<span class="status-dot"></span>' + value;
+        }
+
+        function updateButtons() {
+            document.getElementById('startBtn').disabled = running || busy;
+            document.getElementById('pauseBtn').disabled = !running || busy;
+            document.getElementById('lapBtn').disabled = !running || busy;
+        }
+
+        function renderLaps() {
+            const list = document.getElementById('lapList');
+
+            document.getElementById('lapCount').textContent =
+                laps.length + (laps.length === 1 ? ' LAP' : ' LAPS');
+
+            list.innerHTML = '';
+
+            if (laps.length === 0) {
+                list.innerHTML =
+                    '<div class="empty">Your lap records will appear here.</div>';
+                return;
+            }
+
+            [...laps].reverse().forEach(lap => {
+                const row = document.createElement('div');
+                row.className = 'lap-row';
+
+                const label = document.createElement('span');
+                label.textContent = 'Lap ' + lap.lapNumber;
+
+                const time = document.createElement('span');
+                time.textContent = formatTime(lap.elapsedMs).main +
+                    formatTime(lap.elapsedMs).fraction;
+
+                row.append(label, time);
+                list.appendChild(row);
+            });
+        }
+
+        async function apiRequest(endpoint = '', method = 'GET') {
+            const response = await fetch(API + endpoint, {
+                method: method
+            });
+
+            if (!response.ok) {
+                const message = await response.text();
+                throw new Error(message || 'Request failed');
+            }
+
+            return response.status === 204 ? null : response.json();
+        }
+
+        function applyState(state) {
+            elapsed = state.elapsedMs;
+            running = state.running;
+            syncTime = Date.now();
+            laps = state.laps || [];
+
+            setStatus(running ? 'RUNNING' :
+                elapsed > 0 ? 'PAUSED' : 'READY');
+
+            updateDisplay();
+            renderLaps();
+            updateButtons();
+
+            if (displayInterval) {
+                clearInterval(displayInterval);
+                displayInterval = null;
+            }
+
+            if (running) {
+                displayInterval = setInterval(updateDisplay, 10);
+            }
+        }
+
+        async function performAction(endpoint) {
+            if (busy) return;
+
+            busy = true;
+            updateButtons();
+            document.getElementById('error').textContent = '';
+
+            try {
+                const state = await apiRequest(endpoint, 'POST');
+
+                if (endpoint === '/lap') {
+                    const updated = await apiRequest();
+                    applyState(updated);
+                } else {
+                    applyState(state);
+                }
+            } catch (error) {
+                document.getElementById('error').textContent =
+                    'Unable to contact the backend. Please try again.';
+                console.error(error);
+            } finally {
+                busy = false;
+                updateButtons();
+            }
+        }
+
+        function startTimer() {
+            performAction('/start');
+        }
+
+        function pauseTimer() {
+            performAction('/pause');
+        }
+
+        function resetTimer() {
+            performAction('/reset');
+        }
+
+        function recordLap() {
+            performAction('/lap');
+        }
+
+        async function initialize() {
+            try {
+                const state = await apiRequest();
+                applyState(state);
+            } catch (error) {
+                document.getElementById('error').textContent =
+                    'Unable to connect to the backend.';
+                console.error(error);
+            }
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
