@@ -12,7 +12,7 @@ public class Application {
     @GetMapping("/")
     public String home() {
         // return "Hello from Azure CI/CD! Version: 1.0";
-        return "Hello from Azure CI/CD! Version: 2.0";
+        return "Hello from Azure CI/CD! Version: 3.0";
     }
 
     public static void main(String[] args) {
