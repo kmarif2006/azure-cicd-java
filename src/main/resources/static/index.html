@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#101827">
     <title>Stopwatch</title>
 
     <style>
@@ -14,465 +13,214 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --text: #f5f7ff;
-            --muted: #aab5ca;
-            --blue: #78aaff;
-            --cyan: #75e0ee;
-            --glass: rgba(255, 255, 255, 0.075);
-            --border: rgba(255, 255, 255, 0.14);
-        }
-
         body {
             min-height: 100vh;
-            padding: 28px 18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont,
-                "SF Pro Display", "Segoe UI", sans-serif;
-            color: var(--text);
+            font-family: 'Segoe UI', Arial, sans-serif;
             background:
-                radial-gradient(ellipse at 15% 15%, rgba(70, 111, 220, .32), transparent 38%),
-                radial-gradient(ellipse at 85% 25%, rgba(25, 190, 205, .20), transparent 35%),
-                radial-gradient(ellipse at 50% 100%, rgba(123, 74, 210, .22), transparent 42%),
-                #0b1220;
-            overflow-x: hidden;
-        }
-
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            filter: blur(90px);
-            opacity: .28;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        body::before {
-            background: #367cff;
-            top: -100px;
-            left: -100px;
-        }
-
-        body::after {
-            background: #13c7c9;
-            bottom: -120px;
-            right: -90px;
-        }
-
-        button {
-            font: inherit;
+                radial-gradient(circle at 15% 20%, #263d70 0, transparent 35%),
+                radial-gradient(circle at 85% 80%, #35245e 0, transparent 35%),
+                #0b1020;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
         }
 
         .app {
             width: 100%;
-            max-width: 850px;
+            max-width: 620px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 28px;
+            padding: 36px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            backdrop-filter: blur(18px);
         }
 
-        .topbar {
+        .header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 28px;
-        }
-
-        .brand {
-            display: flex;
             align-items: center;
-            gap: 12px;
+            margin-bottom: 42px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .brand-icon {
-            width: 43px;
-            height: 43px;
-            display: grid;
-            place-items: center;
-            border-radius: 15px;
-            font-size: 21px;
-            background: linear-gradient(145deg, rgba(120,170,255,.35), rgba(117,224,238,.12));
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 25px rgba(0,0,0,.18);
-        }
-
-        .brand-name {
-            font-size: 17px;
-            font-weight: 650;
-            letter-spacing: .2px;
-        }
-
-        .brand-subtitle {
-            margin-top: 3px;
-            color: var(--muted);
-            font-size: 11px;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-        }
-
-        .version-pill {
+        .version {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #8b9cff;
+            background: rgba(113,135,255,0.14);
+            border: 1px solid rgba(139,156,255,0.35);
             padding: 9px 13px;
-            border: 1px solid rgba(120,170,255,.25);
             border-radius: 30px;
-            background: rgba(75,130,230,.13);
-            color: #b9d2ff;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .glass {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(26px) saturate(165%);
-            -webkit-backdrop-filter: blur(26px) saturate(165%);
-            box-shadow:
-                0 24px 70px rgba(0,0,0,.22),
-                inset 0 1px 0 rgba(255,255,255,.08);
-        }
-
-        .main-card {
-            position: relative;
-            overflow: hidden;
-            padding: 38px 34px 32px;
-            border-radius: 32px;
-        }
-
-        .main-card::before {
-            content: "";
-            position: absolute;
-            width: 260px;
-            height: 260px;
-            top: -180px;
-            right: -80px;
-            border-radius: 50%;
-            background: rgba(87,150,255,.18);
-            filter: blur(50px);
-            pointer-events: none;
-        }
-
-        .section-heading {
-            position: relative;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .eyebrow {
-            color: var(--cyan);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            font-size: clamp(25px, 5vw, 35px);
-            font-weight: 650;
-            letter-spacing: -1.2px;
-        }
-
-        .description {
-            margin-top: 9px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .timer-panel {
-            position: relative;
-            padding: 36px 15px;
-            border-radius: 25px;
-            text-align: center;
-            background: linear-gradient(
-                145deg,
-                rgba(255,255,255,.075),
-                rgba(255,255,255,.025)
-            );
-            border: 1px solid rgba(255,255,255,.10);
-        }
-
-        .timer-label {
-            color: var(--muted);
-            font-size: 11px;
-            font-weight: 650;
-            letter-spacing: 2.5px;
-            margin-bottom: 17px;
-        }
-
-        .timer {
-            font-variant-numeric: tabular-nums;
-            font-size: clamp(43px, 10vw, 76px);
-            line-height: 1.1;
-            font-weight: 300;
-            letter-spacing: -3px;
-            white-space: nowrap;
-            text-shadow: 0 0 35px rgba(120,170,255,.15);
-        }
-
-        .timer .milliseconds {
-            color: #91baff;
         }
 
         .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 22px;
-            padding: 8px 13px;
-            border: 1px solid var(--border);
+            font-size: 12px;
+            color: #aeb9d1;
+            background: rgba(255,255,255,0.08);
+            padding: 9px 14px;
             border-radius: 30px;
-            background: rgba(255,255,255,.045);
-            color: var(--muted);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
         }
 
         .status-dot {
+            display: inline-block;
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: #9aa8bd;
-        }
-
-        .status.running {
-            color: #9cf1d0;
-            border-color: rgba(83,224,166,.25);
+            background: #a0a9bb;
+            margin-right: 7px;
         }
 
         .status.running .status-dot {
-            background: #55e3a4;
-            box-shadow: 0 0 12px #55e3a4;
-            animation: pulse 1.5s infinite;
+            background: #27e0a3;
+            box-shadow: 0 0 10px #27e0a3;
         }
 
-        @keyframes pulse {
-            50% { opacity: .35; }
+        .heading {
+            text-align: center;
+            color: #aab5ce;
+            font-size: 12px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .timer {
+            text-align: center;
+            margin: 28px 0 35px;
+            font-size: clamp(43px, 10vw, 76px);
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .timer .milliseconds {
+            color: #8b9cff;
         }
 
         .controls {
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 13px;
-            margin: 28px 0 30px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
-        .control-btn {
-            min-width: 118px;
-            padding: 15px 22px;
-            border-radius: 17px;
-            border: 1px solid var(--border);
-            color: var(--text);
-            background: rgba(255,255,255,.075);
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 650;
-            transition: transform .2s, background .2s, opacity .2s;
-        }
-
-        .control-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            background: rgba(255,255,255,.14);
-        }
-
-        .control-btn:active:not(:disabled) {
-            transform: scale(.97);
-        }
-
-        .control-btn:disabled {
-            opacity: .35;
-            cursor: not-allowed;
-        }
-
-        .primary-btn {
-            color: #071426;
-            background: linear-gradient(135deg, #a7caff, #6fe0eb);
+        button {
             border: none;
-            box-shadow: 0 9px 25px rgba(83,169,238,.22);
+            border-radius: 14px;
+            padding: 15px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s ease;
         }
 
-        .primary-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #c2dbff, #8af0f5);
+        button:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.12);
         }
 
-        .lap-btn {
-            color: #c4d9ff;
+        button:active {
+            transform: scale(.96);
         }
 
-        .reset-btn {
-            color: #ffb8c2;
+        button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .lap-section {
-            position: relative;
-            border-top: 1px solid rgba(255,255,255,.10);
-            padding-top: 25px;
+        .start {
+            background: #27e0a3;
+            color: #071b17;
+            min-width: 115px;
         }
 
-        .lap-heading {
+        .pause {
+            background: #ffbd59;
+            color: #291900;
+        }
+
+        .reset {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        .lap {
+            background: #7187ff;
+            color: white;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
         }
 
-        .lap-heading h2 {
-            font-size: 14px;
-            font-weight: 650;
+        .section-header h3 {
+            font-size: 15px;
         }
 
         .lap-count {
-            color: var(--muted);
-            font-size: 11px;
+            color: #aab5ce;
+            font-size: 12px;
         }
 
         .lap-list {
-            display: flex;
-            flex-direction: column;
-            gap: 9px;
-            max-height: 235px;
+            margin-top: 10px;
+            max-height: 220px;
             overflow-y: auto;
         }
 
         .lap-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            align-items: center;
-            padding: 14px 16px;
-            border-radius: 14px;
-            background: rgba(255,255,255,.045);
-            border: 1px solid rgba(255,255,255,.065);
-            font-size: 12px;
-            font-variant-numeric: tabular-nums;
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            color: #d5ddef;
+            font-size: 14px;
         }
 
-        .lap-row.header-row {
-            padding: 5px 16px;
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            font-size: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .lap-row:first-child {
+            color: #27e0a3;
         }
 
-        .lap-row span:nth-child(2) {
+        .empty {
             text-align: center;
-        }
-
-        .lap-row span:nth-child(3) {
-            text-align: right;
-        }
-
-        .lap-number {
-            color: #a9c9ff;
-            font-weight: 650;
-        }
-
-        .lap-time {
-            color: var(--text);
-        }
-
-        .lap-split {
-            color: var(--cyan);
-        }
-
-        .empty-state {
-            padding: 25px 10px;
-            text-align: center;
-            color: var(--muted);
-            font-size: 12px;
+            color: #77839d;
+            padding: 25px 0;
+            font-size: 13px;
         }
 
         .footer {
-            margin-top: 22px;
             text-align: center;
-            color: rgba(210,220,240,.48);
-            font-size: 10px;
-            letter-spacing: 1.5px;
+            margin-top: 35px;
+            color: #66728d;
+            font-size: 11px;
+            letter-spacing: 1px;
         }
 
-        .toast {
-            position: fixed;
-            left: 50%;
-            bottom: 25px;
-            transform: translate(-50%, 20px);
-            opacity: 0;
-            pointer-events: none;
-            padding: 12px 18px;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: rgba(20,31,49,.92);
-            color: #fff;
-            font-size: 12px;
-            backdrop-filter: blur(20px);
-            transition: .25s ease;
-            z-index: 5;
+        .error {
+            color: #ff8c8c;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 15px;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translate(-50%, 0);
-        }
-
-        button:focus-visible {
-            outline: 2px solid var(--cyan);
-            outline-offset: 4px;
-        }
-
-        @media (max-width: 560px) {
-            body {
-                padding: 18px 12px;
-                align-items: flex-start;
-            }
-
-            .topbar {
-                margin-bottom: 18px;
-            }
-
-            .main-card {
-                padding: 27px 17px 23px;
-                border-radius: 25px;
-            }
-
-            .timer-panel {
-                padding: 34px 8px;
-            }
-
-            .timer {
-                letter-spacing: -2px;
-            }
-
-            .controls {
-                gap: 9px;
-            }
-
-            .control-btn {
-                min-width: 0;
-                flex: 1;
-                padding: 14px 10px;
-                font-size: 12px;
-            }
-        }
-
-        @media (prefers-reduced-transparency: reduce) {
-            .glass {
-                background: #182438;
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: .01ms !important;
-                transition-duration: .01ms !important;
-            }
+        @media (max-width: 480px) {
+            .app { padding: 25px 16px; }
+            .header { margin-bottom: 35px; }
+            button { padding: 13px 17px; }
         }
     </style>
 </head>
@@ -480,389 +228,215 @@
 <body>
     <main class="app">
 
-        <header class="topbar">
-            <div class="brand">
-                <div class="brand-icon">◷</div>
-                <div>
-                    <div class="brand-name">Stopwatch</div>
-                    <div class="brand-subtitle">Precision timer</div>
-                </div>
-            </div>
-
-            <div class="version-pill" id="versionBadge">
-                VERSION 1.0
+        <header class="header">
+            <div class="version" id="version">STOPWATCH · VERSION 1.0</div>
+            <div class="status" id="status">
+                <span class="status-dot"></span>READY
             </div>
         </header>
 
-        <section class="main-card glass">
+        <div class="heading">Precision Stopwatch</div>
 
-            <div class="section-heading">
-                <div class="eyebrow">Time your moments</div>
-                <h1>Every second counts.</h1>
-                <p class="description">
-                    A simple space to measure your progress.
-                </p>
+        <div class="timer" id="timer">
+            00:00:00<span class="milliseconds">.00</span>
+        </div>
+
+        <div class="controls">
+            <button class="start" id="startBtn" onclick="startTimer()">▶ Start</button>
+            <button class="pause" id="pauseBtn" onclick="pauseTimer()">Ⅱ Pause</button>
+            <button class="reset" onclick="resetTimer()">↻ Reset</button>
+            <button class="lap" id="lapBtn" onclick="recordLap()">⚑ Lap</button>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <section class="section">
+            <div class="section-header">
+                <h3>Lap History</h3>
+                <span class="lap-count" id="lapCount">0 LAPS</span>
             </div>
 
-            <div class="timer-panel">
-                <div class="timer-label">ELAPSED TIME</div>
-
-                <div class="timer" aria-live="off">
-                    <span id="minutes">00</span>:<span id="seconds">00</span><span class="milliseconds">.<span id="centiseconds">00</span></span>
-                </div>
-
-                <div class="status" id="status">
-                    <span class="status-dot"></span>
-                    <span id="statusText">READY</span>
-                </div>
+            <div class="lap-list" id="lapList">
+                <div class="empty">Your lap records will appear here.</div>
             </div>
-
-            <div class="controls">
-                <button class="control-btn primary-btn" id="startBtn"
-                        onclick="startStopwatch()">
-                    ▶ Start
-                </button>
-
-                <button class="control-btn lap-btn" id="lapBtn"
-                        onclick="recordLap()" disabled>
-                    ◷ Lap
-                </button>
-
-                <button class="control-btn reset-btn" id="resetBtn"
-                        onclick="resetStopwatch()">
-                    ↺ Reset
-                </button>
-            </div>
-
-            <section class="lap-section">
-                <div class="lap-heading">
-                    <h2>Lap history</h2>
-                    <span class="lap-count" id="lapCount">0 LAPS</span>
-                </div>
-
-                <div class="lap-row header-row">
-                    <span>Lap</span>
-                    <span>Total time</span>
-                    <span>Split</span>
-                </div>
-
-                <div class="lap-list" id="lapList">
-                    <div class="empty-state">
-                        Your recorded laps will appear here.
-                    </div>
-                </div>
-            </section>
-
         </section>
 
-        <footer class="footer" id="footer">
-            JAVA 17 · SPRING BOOT · VERSION 1.0
+        <footer class="footer">
+            BUILT WITH JAVA 17 · SPRING BOOT
         </footer>
+
     </main>
 
-    <div class="toast" id="toast"></div>
-
     <script>
-        /*
-         * ==========================================
-         * APPLICATION VERSION
-         * Change this value to demonstrate CI/CD.
-         * Example: "1.0" -> "2.0"
-         * ==========================================
-         */
-        const APP_VERSION = "1.0";
+        const API = '/api/stopwatch';
 
-        document.getElementById("versionBadge").textContent =
-            "VERSION " + APP_VERSION;
-
-        document.getElementById("footer").textContent =
-            "JAVA 17 · SPRING BOOT · VERSION " + APP_VERSION;
-
-
-        /*
-         * ==========================================
-         * STOPWATCH BACKEND CONNECTION
-         * Spring Boot REST API endpoints
-         * ==========================================
-         */
-        const API = "/api/stopwatch";
-
-        let elapsedMs = 0;
+        let elapsed = 0;
         let running = false;
+        let syncTime = 0;
+        let displayInterval = null;
+        let busy = false;
         let laps = [];
-        let lastLapTime = 0;
 
-        // Local animation keeps the display smooth.
-        // The backend remains the source of stopwatch state.
-        let localStartTime = 0;
-        let animationFrame = null;
-        let toastTimeout = null;
-
-
-        function currentElapsed() {
-            if (running) {
-                return elapsedMs + (performance.now() - localStartTime);
-            }
-
-            return elapsedMs;
-        }
-
-
-        function formatTime(milliseconds) {
-            const totalCentiseconds = Math.floor(milliseconds / 10);
-
-            const minutes = Math.floor(totalCentiseconds / 6000);
-            const seconds = Math.floor((totalCentiseconds % 6000) / 100);
-            const centiseconds = totalCentiseconds % 100;
+        function formatTime(ms) {
+            const total = Math.floor(ms);
+            const hours = Math.floor(total / 3600000);
+            const minutes = Math.floor((total % 3600000) / 60000);
+            const seconds = Math.floor((total % 60000) / 1000);
+            const centiseconds = Math.floor((total % 1000) / 10);
 
             return {
-                minutes: String(minutes).padStart(2, "0"),
-                seconds: String(seconds).padStart(2, "0"),
-                centiseconds: String(centiseconds).padStart(2, "0")
+                main: [hours, minutes, seconds]
+                    .map(n => String(n).padStart(2, '0')).join(':'),
+                fraction: '.' + String(centiseconds).padStart(2, '0')
             };
         }
 
+        function currentTime() {
+            return elapsed + (running ? Date.now() - syncTime : 0);
+        }
 
         function updateDisplay() {
-            const time = formatTime(currentElapsed());
+            const time = formatTime(currentTime());
 
-            document.getElementById("minutes").textContent = time.minutes;
-            document.getElementById("seconds").textContent = time.seconds;
-            document.getElementById("centiseconds").textContent =
-                time.centiseconds;
-
-            animationFrame = requestAnimationFrame(updateDisplay);
+            document.getElementById('timer').innerHTML =
+                time.main +
+                '<span class="milliseconds">' +
+                time.fraction + '</span>';
         }
 
-
-        function startDisplay() {
-            if (animationFrame === null) {
-                animationFrame = requestAnimationFrame(updateDisplay);
-            }
+        function setStatus(value) {
+            const status = document.getElementById('status');
+            status.classList.toggle('running', value === 'RUNNING');
+            status.innerHTML =
+                '<span class="status-dot"></span>' + value;
         }
 
-
-        function stopDisplay() {
-            if (animationFrame !== null) {
-                cancelAnimationFrame(animationFrame);
-                animationFrame = null;
-            }
-
-            updateDisplayOnce();
+        function updateButtons() {
+            document.getElementById('startBtn').disabled = running || busy;
+            document.getElementById('pauseBtn').disabled = !running || busy;
+            document.getElementById('lapBtn').disabled = !running || busy;
         }
-
-
-        function updateDisplayOnce() {
-            const time = formatTime(currentElapsed());
-
-            document.getElementById("minutes").textContent = time.minutes;
-            document.getElementById("seconds").textContent = time.seconds;
-            document.getElementById("centiseconds").textContent =
-                time.centiseconds;
-        }
-
-
-        function updateControls() {
-            const startBtn = document.getElementById("startBtn");
-            const lapBtn = document.getElementById("lapBtn");
-            const status = document.getElementById("status");
-            const statusText = document.getElementById("statusText");
-
-            if (running) {
-                startBtn.textContent = "Ⅱ Pause";
-                status.classList.add("running");
-                statusText.textContent = "RUNNING";
-                lapBtn.disabled = false;
-            } else {
-                startBtn.textContent =
-                    elapsedMs > 0 ? "▶ Resume" : "▶ Start";
-
-                status.classList.remove("running");
-                statusText.textContent =
-                    elapsedMs > 0 ? "PAUSED" : "READY";
-
-                lapBtn.disabled = true;
-            }
-        }
-
 
         function renderLaps() {
-            const lapList = document.getElementById("lapList");
-            const lapCount = document.getElementById("lapCount");
+            const list = document.getElementById('lapList');
 
-            lapCount.textContent =
-                laps.length + (laps.length === 1 ? " LAP" : " LAPS");
+            document.getElementById('lapCount').textContent =
+                laps.length + (laps.length === 1 ? ' LAP' : ' LAPS');
+
+            list.innerHTML = '';
 
             if (laps.length === 0) {
-                lapList.innerHTML = `
-                    <div class="empty-state">
-                        Your recorded laps will appear here.
-                    </div>
-                `;
-                lastLapTime = 0;
+                list.innerHTML =
+                    '<div class="empty">Your lap records will appear here.</div>';
                 return;
             }
 
-            lapList.innerHTML = "";
+            [...laps].reverse().forEach(lap => {
+                const row = document.createElement('div');
+                row.className = 'lap-row';
 
-            // Newest lap appears first.
-            [...laps].reverse().forEach((lap) => {
-                const total = Number(lap.elapsedMs);
-                const split = total - lastLapTime;
+                const label = document.createElement('span');
+                label.textContent = 'Lap ' + lap.lapNumber;
 
-                const row = document.createElement("div");
-                row.className = "lap-row";
+                const time = document.createElement('span');
+                time.textContent = formatTime(lap.elapsedMs).main +
+                    formatTime(lap.elapsedMs).fraction;
 
-                const number = document.createElement("span");
-                number.className = "lap-number";
-                number.textContent =
-                    "LAP " + String(lap.lapNumber).padStart(2, "0");
-
-                const totalTime = document.createElement("span");
-                totalTime.className = "lap-time";
-                totalTime.textContent = formatLapTime(total);
-
-                const splitTime = document.createElement("span");
-                splitTime.className = "lap-split";
-                splitTime.textContent = "+" + formatLapTime(split);
-
-                row.append(number, totalTime, splitTime);
-                lapList.appendChild(row);
-
-                lastLapTime = total;
+                row.append(label, time);
+                list.appendChild(row);
             });
         }
 
-
-        function formatLapTime(milliseconds) {
-            const time = formatTime(milliseconds);
-
-            return time.minutes + ":" + time.seconds + "." +
-                time.centiseconds;
-        }
-
-
-        async function apiRequest(endpoint, method = "GET") {
+        async function apiRequest(endpoint = '', method = 'GET') {
             const response = await fetch(API + endpoint, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                method: method
             });
 
             if (!response.ok) {
-                let message = "Request failed. Please try again.";
-
-                try {
-                    const error = await response.json();
-                    message = error.message || message;
-                } catch (_) {
-                    // Keep the default error message.
-                }
-
-                throw new Error(message);
+                const message = await response.text();
+                throw new Error(message || 'Request failed');
             }
 
-            return response.json();
+            return response.status === 204 ? null : response.json();
         }
-
 
         function applyState(state) {
-            elapsedMs = Number(state.elapsedMs) || 0;
-            running = Boolean(state.running);
-            laps = Array.isArray(state.laps) ? state.laps : [];
+            elapsed = state.elapsedMs;
+            running = state.running;
+            syncTime = Date.now();
+            laps = state.laps || [];
+
+            setStatus(running ? 'RUNNING' :
+                elapsed > 0 ? 'PAUSED' : 'READY');
+
+            updateDisplay();
+            renderLaps();
+            updateButtons();
+
+            if (displayInterval) {
+                clearInterval(displayInterval);
+                displayInterval = null;
+            }
 
             if (running) {
-                localStartTime = performance.now();
-                startDisplay();
-            } else {
-                stopDisplay();
+                displayInterval = setInterval(updateDisplay, 10);
             }
-
-            updateControls();
-            renderLaps();
         }
 
+        async function performAction(endpoint) {
+            if (busy) return;
 
-        async function startStopwatch() {
-            const button = document.getElementById("startBtn");
-            button.disabled = true;
+            busy = true;
+            updateButtons();
+            document.getElementById('error').textContent = '';
 
             try {
-                const endpoint = running ? "/pause" : "/start";
-                const state = await apiRequest(endpoint, "POST");
-                applyState(state);
+                const state = await apiRequest(endpoint, 'POST');
+
+                if (endpoint === '/lap') {
+                    const updated = await apiRequest();
+                    applyState(updated);
+                } else {
+                    applyState(state);
+                }
             } catch (error) {
-                showToast(error.message);
+                document.getElementById('error').textContent =
+                    'Unable to contact the backend. Please try again.';
+                console.error(error);
             } finally {
-                button.disabled = false;
+                busy = false;
+                updateButtons();
             }
         }
 
-
-        async function recordLap() {
-            if (!running) return;
-
-            const button = document.getElementById("lapBtn");
-            button.disabled = true;
-
-            try {
-                await apiRequest("/lap", "POST");
-
-                const state = await apiRequest("");
-                applyState(state);
-                showToast("Lap recorded");
-            } catch (error) {
-                showToast(error.message);
-            } finally {
-                button.disabled = !running;
-            }
+        function startTimer() {
+            performAction('/start');
         }
 
-
-        async function resetStopwatch() {
-            const button = document.getElementById("resetBtn");
-            button.disabled = true;
-
-            try {
-                const state = await apiRequest("/reset", "POST");
-                applyState(state);
-                showToast("Stopwatch reset");
-            } catch (error) {
-                showToast(error.message);
-            } finally {
-                button.disabled = false;
-            }
+        function pauseTimer() {
+            performAction('/pause');
         }
 
-
-        function showToast(message) {
-            const toast = document.getElementById("toast");
-
-            toast.textContent = message;
-            toast.classList.add("show");
-
-            clearTimeout(toastTimeout);
-
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove("show");
-            }, 2200);
+        function resetTimer() {
+            performAction('/reset');
         }
 
+        function recordLap() {
+            performAction('/lap');
+        }
 
-        async function loadStopwatch() {
+        async function initialize() {
             try {
-                const state = await apiRequest("");
+                const state = await apiRequest();
                 applyState(state);
             } catch (error) {
-                showToast("Cannot connect to stopwatch server");
+                document.getElementById('error').textContent =
+                    'Unable to connect to the backend.';
                 console.error(error);
             }
         }
 
-
-        // Load the current backend state when the page opens.
-        loadStopwatch();
+        initialize();
     </script>
 </body>
 </html>
