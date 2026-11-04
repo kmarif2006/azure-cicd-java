@@ -23,10 +23,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      #Download project code
+      # Download project code
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       # Install Gitleaks
       - name: Install Gitleaks
         run: |
@@ -39,18 +39,18 @@ jobs:
       - name: Gitleaks security scan
         run: gitleaks git --redact --exit-code 2 .
 
-      #Install Java 17
+      # Install Java 17
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      #Build and test Java application
+      # Build and test Java application
       - name: Build and test
         run: mvn clean test package
 
-      #Login to Azure
+      # Login to Azure using OIDC
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -58,7 +58,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      #Build and push Docker image
+      # Build and push Docker image
       - name: Build and push Docker image
         run: |
           az acr login --name $ACR_NAME
@@ -67,14 +67,19 @@ jobs:
 
           docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }}
 
-      #Connect to AKS
+      # Connect to AKS
       - name: Connect to AKS
         run: |
           az aks get-credentials \
             --resource-group cicd-rg \
             --name cicd-aks
 
-      #Deploy updated image
+      # Apply Kubernetes Deployment configuration
+      - name: Apply Kubernetes configuration
+        run: |
+          kubectl apply -f k8s/
+
+      # Deploy updated Docker image
       - name: Deploy to AKS
         run: |
           kubectl set image deployment/azure-cicd-java \
@@ -82,8 +87,9 @@ jobs:
 
           kubectl rollout status deployment/azure-cicd-java --timeout=180s
 
-      #Verify deployment
+      # Verify deployment
       - name: Verify deployment
         run: |
+          kubectl get deployments
           kubectl get pods
           kubectl get services
