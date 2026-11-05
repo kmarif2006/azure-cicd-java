@@ -1,7 +1,43 @@
-.git
-.github
-.idea
-.vscode
-target/*.original
+
+# Git files
+.git/
+.gitignore
+
+# GitHub workflows
+.github/
+
+# Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Credentials and private keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+.azure/
+
+# Logs
 *.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
 README.md
